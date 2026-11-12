@@ -8,5 +8,3 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
-resumes/
-*.sqlite3
