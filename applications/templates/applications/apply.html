@@ -1,0 +1,36 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Apply for {{ job.title }}{% endblock %}
+
+{% block content %}
+
+<div class="application-container">
+    <h2>Apply for {{ job.title }}</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.errors %}
+                    <div class="error-text">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn">
+            Submit Application
+        </button>
+    </form>
+</div>
+
+{% endblock %}

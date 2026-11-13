@@ -1,0 +1,35 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+Home | Job Portal
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <h1>Find Your Dream Job</h1>
+    <p>Explore opportunities and take the next step in your career.</p>
+    <a href="#jobs" class="btn">Explore Jobs</a>
+</section>
+
+<section id="jobs" class="jobs-section">
+    <h2>Latest Job Opportunities</h2>
+
+    
+    {% if jobs %}
+        <div class="jobs-grid">
+            {% for job in jobs %}
+                {% include 'partials/job_card.html' with job=job %}
+            {% endfor %}
+        </div>
+
+        {% include 'partials/pagination.html' with page_obj=page_obj %}
+
+    {% else %}
+        {% include 'partials/empty_state.html' %}
+    {% endif %}
+
+</section>
+
+{% endblock %}

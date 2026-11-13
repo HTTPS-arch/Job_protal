@@ -1,0 +1,111 @@
+:root {
+  /* Brand Colors */
+  --primary-color: #2563eb;
+  --secondary-color: #1e293b;
+  --accent-color: #f59e0b;
+
+  /* Background Colors */
+  --background-color: #f8fafc;
+  --surface-color: #ffffff;
+
+  /* Text Colors */
+  --text-color: #1e293b;
+  --muted-color: #64748b;
+  --border-color: #e2e8f0;
+
+  /* Font */
+  --font-family: Arial, sans-serif;
+
+  /* Font Sizes */
+  --font-small: 14px;
+  --font-medium: 16px;
+  --font-large: 24px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+
+  /* Border Radius */
+  --radius-small: 4px;
+  --radius-medium: 8px;
+  --radius-large: 12px;
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial,sans-serief;
+  background-color: #f8fafc;
+  color: #1e293b;;
+  line-height: 1.6;
+}
+/* Navigation */
+.site-header {
+    background-color: #1e293b;
+    padding: 18px 40px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    color: white;
+    font-size: 24px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.nav-links a {
+    color: white;
+    margin-left: 24px;
+    text-decoration: none;
+}
+
+/* Main content */
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+.hero {
+    background-color: white;
+    padding: 60px 30px;
+    text-align: center;
+    border-radius: 12px;
+}
+
+.hero h1 {
+    font-size: 40px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: #2563eb;
+  color: white;
+  text-decoration: none;
+}
+/* Jobs section */
+.jobs-section {
+    margin-top: 35px;
+}
+
+/* Footer */
+.site-footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #1e293b;
+    color: white;
+}

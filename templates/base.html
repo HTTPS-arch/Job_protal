@@ -1,0 +1,42 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Find jobs and explore career opportunities."
+    />
+    <title>{% block title %}Job Portal{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <header class="site-header">
+      <nav class="navbar">
+        <a href="{% url 'job_list' %}" class="logo">Job Portal</a>
+
+        <div class="nav-links">
+          <a href="{% url 'job_list' %}">Jobs</a>
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Django Messages -->
+      <main class="container">
+    {% include 'partials/alert.html' %}
+
+    {% block content %}{% endblock %}
+</main>
+      
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p>&copy; {% now "Y" %} Job Portal. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+{{ job.title }} | Job Portal
+{% endblock %}
+
+{% block content %}
+
+<section class="job-detail">
+
+    <h1>{{ job.title }}</h1>
+
+    <p><strong>Department:</strong> {{ job.department }}</p>
+    <p><strong>Location:</strong> {{ job.location }}</p>
+    <p><strong>Job Type:</strong> {{ job.job_type }}</p>
+    <p><strong>Experience:</strong> {{ job.experience_level }}</p>
+    <p><strong>Salary:</strong> {{ job.salary_range|default:"Not disclosed" }}</p>
+    <p><strong>Closing Date:</strong> {{ job.closing_date }}</p>
+
+    <hr>
+
+    <h2>Job Description</h2>
+    <p>{{ job.description|linebreaks }}</p>
+
+    <h2>Requirements</h2>
+    <p>{{ job.requirements|linebreaks }}</p>
+
+    <h2>Responsibilities</h2>
+    <p>{{ job.responsibilities|linebreaks }}</p>
+
+    <a href="{% url 'job_list' %}" class="btn">Back to Jobs</a>
+<div class="apply-section">
+    <a href="{% url 'apply_for_job' job.slug %}" class="btn">
+        Apply Now
+    </a>
+</div>
+</section>
+
+{% endblock %}

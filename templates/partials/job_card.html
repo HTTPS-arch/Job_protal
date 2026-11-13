@@ -1,0 +1,8 @@
+<div class="job-card">
+    <h3>{{ job.title }}</h3>
+    <p>{{ job.department }} | {{ job.location }}</p>
+    <p>{{ job.job_type }}</p>
+    <a href="{% url 'job_detail' job.slug %}" class="btn">
+    View Details
+</a>
+</div>

@@ -10,3 +10,4 @@ __pycache__/
 .vscode/
 resumes/
 *.sqlite3
+*.env
