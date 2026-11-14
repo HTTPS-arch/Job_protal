@@ -1,10 +1,14 @@
 import csv
+from pathlib import Path
 
 from django.contrib import admin, messages
+from django.core.exceptions import PermissionDenied
 from django.db.models import Count
-from django.http import HttpResponse
+from django.http import FileResponse, Http404, HttpResponse
+from django.urls import path, reverse
 from django.utils import timezone
 from django.utils.html import format_html
+from django.utils.text import slugify
 
 from .models import Application, Department, Job
 
@@ -83,10 +87,34 @@ class ApplicationAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False  # applications sirf public site se aati hain
 
+    # --- Resume download (sirf logged-in staff ke liye) ---
+    def get_urls(self):
+        custom = [
+            path('<int:pk>/resume/',
+                 self.admin_site.admin_view(self.download_resume),
+                 name='jobs_application_resume'),
+        ]
+        return custom + super().get_urls()  # custom pehle, warna admin ka catch-all pakad leta hai
+
+    def download_resume(self, request, pk):
+        obj = self.get_object(request, str(pk))
+        if obj is None or not obj.resume:
+            raise Http404('Resume not found')
+        if not self.has_view_permission(request, obj):
+            raise PermissionDenied
+        try:
+            fh = obj.resume.open('rb')
+        except FileNotFoundError:
+            raise Http404('Resume file missing')
+        ext = Path(obj.resume.name).suffix
+        filename = f'{slugify(obj.full_name) or "applicant"}-resume{ext}'
+        return FileResponse(fh, as_attachment=True, filename=filename)
+
     @admin.display(description='Resume')
     def resume_link(self, obj):
-        if obj.resume:
-            return format_html('<a href="{}" target="_blank">Download resume</a>', obj.resume.url)
+        if obj.pk and obj.resume:
+            url = reverse('admin:jobs_application_resume', args=[obj.pk])
+            return format_html('<a href="{}">Download resume</a>', url)
         return '-'
 
     @admin.action(description='Export selected to CSV')

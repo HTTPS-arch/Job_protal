@@ -120,3 +120,11 @@ class Application(models.Model):
 
     def __str__(self):
         return f'{self.full_name} → {self.job.title}'
+    
+class StoredFile(models.Model):
+    """Resume files DB mein (Render free pe disk persistent nahi hota)."""
+    name = models.CharField(max_length=255, unique=True)
+    content = models.BinaryField()
+
+    def __str__(self):
+        return self.name
