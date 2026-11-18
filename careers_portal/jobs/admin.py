@@ -12,7 +12,6 @@ from django.utils.text import slugify
 
 from .models import Application, Department, Job
 
-# Custom title / header
 admin.site.site_header = 'Avalanche High-Tech Enterprises HR Panel'
 admin.site.site_title = 'Avalanche HR'
 admin.site.index_title = 'Careers Management'
@@ -35,18 +34,111 @@ class DepartmentAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('title', 'department', 'location', 'job_type',
-                    'closing_date', 'is_active', 'application_count')
-    list_filter = ('job_type', 'location', 'is_active')
-    search_fields = ('title', 'description', 'location')
+    list_display = (
+        'title',
+        'job_code',
+        'department',
+        'location',
+        'job_type',
+        'closing_date',
+        'is_active',
+        'is_expired',
+        'application_count',
+    )
+
+    list_filter = (
+        'job_type',
+        'location',
+        'is_active',
+        'is_expired',
+        'is_remote',
+    )
+
+    search_fields = (
+        'title',
+        'job_code',
+        'description',
+        'location',
+        'city',
+        'state',
+    )
+
     prepopulated_fields = {'slug': ('title',)}
     inlines = [ApplicationInline]
+
     actions = ['close_jobs', 'reopen_jobs']
 
+    fieldsets = (
+        ('Basic Information', {
+            'fields': (
+                'title',
+                'slug',
+                'department',
+                'location',
+                'job_type',
+                'experience',
+                'description',
+                'responsibilities',
+                'requirements',
+            )
+        }),
+        ('Google for Jobs - Location', {
+            'fields': (
+                'is_remote',
+                'street_address',
+                'city',
+                'state',
+                'postal_code',
+                'country',
+            )
+        }),
+        ('Google for Jobs - Salary', {
+            'fields': (
+                'salary_min',
+                'salary_max',
+                'salary_currency',
+                'salary_period',
+                'salary_range',
+            )
+        }),
+        ('Google for Jobs - Publishing', {
+            'fields': (
+                'job_code',
+                'date_posted',
+                'closing_date',
+                'direct_apply',
+            )
+        }),
+        ('Job Status', {
+            'fields': (
+                'is_active',
+                'is_expired',
+            )
+        }),
+        ('System Information', {
+            'fields': (
+                'created_at',
+                'updated_at',
+            )
+        }),
+    )
+
+    readonly_fields = (
+        'job_code',
+        'date_posted',
+        'direct_apply',
+        'is_expired',
+        'created_at',
+        'updated_at',
+    )
+
     def get_queryset(self, request):
-        return super().get_queryset(request).annotate(app_count=Count('applications'))
+        return super().get_queryset(request).annotate(
+            app_count=Count('applications')
+        )
 
     @admin.display(description='Applications', ordering='app_count')
     def application_count(self, obj):
@@ -54,13 +146,36 @@ class JobAdmin(admin.ModelAdmin):
 
     @admin.action(description='Close selected jobs')
     def close_jobs(self, request, queryset):
-        n = queryset.update(is_active=False)
-        self.message_user(request, f'{n} job(s) closed.', messages.SUCCESS)
+        count = queryset.update(
+            is_active=False,
+            is_expired=True,
+        )
+
+        self.message_user(
+            request,
+            f'{count} job(s) closed and marked expired.',
+            messages.SUCCESS,
+        )
 
     @admin.action(description='Reopen selected jobs')
     def reopen_jobs(self, request, queryset):
-        n = queryset.update(is_active=True)
-        self.message_user(request, f'{n} job(s) reopened.', messages.SUCCESS)
+        today = timezone.localdate()
+
+        eligible_jobs = queryset.filter(closing_date__gte=today)
+
+        count = eligible_jobs.update(
+            is_active=True,
+            is_expired=False,
+        )
+
+        skipped = queryset.count() - count
+
+        self.message_user(
+            request,
+            f'{count} job(s) reopened. {skipped} overdue job(s) skipped.',
+            messages.WARNING if skipped else messages.SUCCESS,
+        )
+
 
 
 def _safe(value):
